@@ -6,7 +6,11 @@
   "repository": "https://github.com/shendepu/nashorn-polyfill.git",
   "author": "Jimmy Shen <shendepu@hotmail.com>",
   "license": "MIT",
+  "resolutions": {
+    "graceful-fs": "^4.2.11"
+  },
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "build:dev": "node node_modules/gulp/bin/gulp.js scripts",
     "build:prod": "node node_modules/gulp/bin/gulp.js scripts:prod",
     "dist": "node node_modules/gulp/bin/gulp.js scripts:dist",
@@ -21,6 +25,7 @@
   },
   "dependencies": {
     "core-js": "^2.5.1",
+    "natives": "^1.1.6",
     "url-search-params": "^0.6.1",
     "webpack": "2.6.1"
   }
