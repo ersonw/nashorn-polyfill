@@ -3,7 +3,7 @@ if (global._nashornPolyfill) {
 }
 global._nashornPolyfill = true
 
-// import 'core-js/shim'
+import 'core-js/shim'
 
 import 'core-js/modules/es6.symbol'
 import 'core-js/modules/es6.object.create'
@@ -19,7 +19,7 @@ import 'core-js/modules/es6.object.prevent-extensions'
 import 'core-js/modules/es6.object.is-frozen'
 import 'core-js/modules/es6.object.is-sealed'
 import 'core-js/modules/es6.object.is-extensible'
-//import 'core-js/modules/es6.object.assign'
+import 'core-js/modules/es6.object.assign'
 import 'core-js/modules/es6.object.is'
 import 'core-js/modules/es6.object.set-prototype-of'
 import 'core-js/modules/es6.object.to-string'
@@ -183,8 +183,18 @@ import 'core-js/modules/web.dom.iterable'
 
 import './lib/blob-polyfill'
 import './lib/xml-http-request-polyfill'
+
 import URLSearchParams from 'url-search-params'
-
-
 global.URLSearchParams = URLSearchParams
 
+import CreateReactClass from 'create-react-class'
+global.CreateReactClass = CreateReactClass
+
+import React from 'react'
+global.React = React
+
+import ReactDom from 'react-dom'
+global.ReactDom = ReactDom
+
+import ReactDomServer from 'react-dom/server'
+global.ReactDomServer = ReactDomServer

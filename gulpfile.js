@@ -1,14 +1,91 @@
 var gulp = require('gulp');
 var gutil = require("gulp-util");
-var concat = require('gulp-concat');
 var webpack = require("webpack");
-var del = require('del');
 var exec = require('gulp-exec');
 var paths = require('./config/paths');
+// const imagemin = import('gulp-imagemin');
+// import imagemin from 'gulp-imagemin';
+// let /** @type {import("imagemin-jpegtran")} */ imageminJpegtran;
+// let /** @type {import("imagemin-pngquant").default} */ imageminPngquant;
 
+var babel = require('gulp-babel'),
+  rev = require('gulp-rev'),
+  revCollector = require('gulp-rev-collector'),
+  cleanCSS = require('gulp-clean-css'),
+  autoprefixer = require('gulp-autoprefixer'),
+  uglify = require('gulp-uglify'),
+  // imagemin = require('gulp-imagemin'),
+  // imagemin = require('gulp-imagemin'),
+  rename = require('gulp-rename'),
+  concat = require('gulp-concat'),
+  notify = require('gulp-notify'),
+  cache = require('gulp-cache'),
+  del = require('del');
+// const imagemin = require("imagemin");
 
 var filename = 'nashorn-polyfill.js'
-var srcFiles = ['./lib/global-polyfill.js', './lib/timer-polyfill.js', './build/nashorn-polyfill.webpack.js']
+var srcFiles = ['./lib/global-polyfill.js', './lib/timer-polyfill.js',  './build/nashorn-polyfill.webpack.js']
+
+gulp.task('css', function () {
+  // 找到 src/css/ 下的所有 css 文件
+  return gulp.src('src/**/*.css')
+    // 添加前缀(如：-webkit-)
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+    // 合并为一个css
+    .pipe(concat('main.css'))
+    // 合并后的css 保存到 dist/css 下
+    .pipe(gulp.dest('dist/css'))
+    // 重命名
+    .pipe(rename({ suffix: '.min' }))
+    // 压缩css
+    .pipe(cleanCSS())
+    .pipe(rev())
+    .pipe(gulp.dest('dist/css'))
+    //CSS 生成文件 hash 编码并生成 rev-manifest.json 文件，里面定义了文件名对照映射
+    .pipe(rev.manifest())
+    .pipe(gulp.dest('rev/css'))
+    .pipe(notify({ message: 'css 文件压缩完成' }));
+});
+gulp.task('js', function () {
+  return gulp.src('src/**/*.js')
+    // 编译es6
+    .pipe(babel())
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest('dist/js'))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(rev())
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/js'))
+    .pipe(rev.manifest())
+    .pipe(gulp.dest('rev/js'))
+    .pipe(notify({ message: 'js 文件编译完成' }));
+});
+// gulp.task('images', function () {
+//   return gulp.src('src/images/**/*')
+//     .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
+//     .pipe(gulp.dest('dist/images'))
+//     .pipe(notify({ message: '图片压缩完成' }));
+// });
+gulp.task('html', function () {
+
+  return gulp.src(['rev/**/*.json', 'src/**/*.html'])
+    .pipe(revCollector({
+      replaceReved: true, // 设置replaceReved标识, 用来说明模板中已经被替换的文件是否还能再被替换,默认是false
+    }))
+    .pipe(gulp.dest('dist'));
+});
+gulp.task('clean', done => {
+  del(['dist/'])
+  console.log('----------------清空文件-------------------')
+  done()
+});
+// gulp.task('build',  gulp.series('clean', gulp.parallel('css', 'js', 'images'), 'html', done => {
+gulp.task('build', ['clean','css','js','html'], function (callback) {
+  console.log('-----------全部执行完毕------------------')
+  callback();
+});
+
+
 
 gulp.task('clean:build', function () {
   return del(paths.build());
@@ -75,7 +152,8 @@ function addBlobPolyfillArg(cmd) {
   return addGlobalPolyfillArg(cmd) + ' ' + paths.lib('blob-polyfill.js')
 }
 
-var jjsCmd = '/usr/bin/jjs';
+// var jjsCmd = '/usr/bin/jjs';
+var jjsCmd = 'jjs';
 
 function execCallback(callback) {
   return function(err, stdout, stderr) {
