@@ -3,8 +3,7 @@ if (global._nashornPolyfill) {
 }
 global._nashornPolyfill = true
 
-import 'core-js/shim'
-
+import 'core-js'
 import 'core-js/modules/es6.symbol'
 import 'core-js/modules/es6.object.create'
 import 'core-js/modules/es6.object.define-property'
@@ -183,18 +182,24 @@ import 'core-js/modules/web.dom.iterable'
 
 import './lib/blob-polyfill'
 import './lib/xml-http-request-polyfill'
+// import './lib/textEncoder'
+import TextEncoder from  './lib/text-encoder'
+global.TextEncoder = TextEncoder
+
 
 import URLSearchParams from 'url-search-params'
 global.URLSearchParams = URLSearchParams
 
-import CreateReactClass from 'create-react-class'
-global.CreateReactClass = CreateReactClass
+// import CreateReactClass from 'create-react-class'
+// global.CreateReactClass = CreateReactClass
 
-import React from 'react'
-global.React = React
+// import React from 'react'
+// global.React = React
+//
+// import ReactDom from 'react-dom'
+// global.ReactDom = ReactDom
 
-import ReactDom from 'react-dom'
-global.ReactDom = ReactDom
-
-import ReactDomServer from 'react-dom/server'
-global.ReactDomServer = ReactDomServer
+// import ReactDomServer from 'react-dom/umd/react-dom-server.browser.production.min.js'
+// global.ReactDomServer = ReactDomServer
+// import ReactDomServer from 'react-dom/server'
+// global.ReactDomServer = ReactDomServer
